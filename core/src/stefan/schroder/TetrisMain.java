@@ -3,6 +3,7 @@ package stefan.schroder;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -23,12 +24,15 @@ import static com.badlogic.gdx.graphics.glutils.ShapeRenderer.*;
 public class TetrisMain extends ApplicationAdapter {
     private Texture blockImage;
 
+    private Sound blockDropSound;
+	private Sound blockBreakSound;
+	private Sound moveClickSound;
+
     private OrthographicCamera camera;
     private SpriteBatch batch;
 
     private Rectangle block;
 
-    private Array<Piece> blocks;
 
     //define blocks
 	private Piece currentPiece;
@@ -120,7 +124,6 @@ public class TetrisMain extends ApplicationAdapter {
 		}
 		//make stone
 		if(collision){
-		    TurnToStone();
 			return true;
 		}
 		return false;
@@ -128,6 +131,7 @@ public class TetrisMain extends ApplicationAdapter {
 	}
 
 	private void TurnToStone() {
+        blockDropSound.play();
 		int[] pos = currentPiece.getPosition();
 		int[] centerpos = currentPiece.getCenter();
 		boolean[][] shape = currentPiece.getShape();
@@ -151,6 +155,8 @@ public class TetrisMain extends ApplicationAdapter {
 	}
 
 	private void BreakLine(int line){
+        blockDropSound.stop();
+		blockBreakSound.play();
 		for(int y=line; y<map.length-1; y++){
 			for(int x=0; x<map[y].length; x++){
 				map[y][x] = map[y+1][x];
@@ -163,6 +169,11 @@ public class TetrisMain extends ApplicationAdapter {
 	public void create () {
     	shapeRenderer = new ShapeRenderer();
 	    blockImage = new Texture(Gdx.files.internal("sprites/Block.png"));
+
+	    blockDropSound = Gdx.audio.newSound(Gdx.files.internal("sounds/Blockland.wav"));
+	    blockBreakSound = Gdx.audio.newSound(Gdx.files.internal("sounds/poof3.wav"));
+	    moveClickSound = Gdx.audio.newSound((Gdx.files.internal("sounds/click.wav")));
+
 	    camera = new OrthographicCamera();
 	    camera.setToOrtho(false, 120, 215);
 
@@ -213,7 +224,8 @@ public class TetrisMain extends ApplicationAdapter {
 		for(int y=0;y<shape.length;y++){
 			for(int x=0;x<shape[y].length;x++){
 				if(shape[y][x]){
-					batch.setColor(Color.PINK);
+					//batch.setColor(Color.PINK);
+					batch.setColor(currentPiece.getColour());
 					int yposition = (shapePosition[1]-shapeCenter[1]+y);
 					int xposition = (shapePosition[0]-shapeCenter[0]+x);
 					//wrapping
@@ -244,6 +256,7 @@ public class TetrisMain extends ApplicationAdapter {
 			}
 		}
 		batch.setColor(Color.PINK);
+		//batch.setColor(currentPiece.getColour());
 		for(int y=0; y<map.length; y++){
             if(map[y][0]) batch.draw(blockImage, 10*10+10, y*10, 10f, 10f);
 			if(map[y][9]) batch.draw(blockImage, 0, y*10, 10f, 10f);
@@ -264,18 +277,22 @@ public class TetrisMain extends ApplicationAdapter {
 		//input
 		if(Gdx.input.isKeyJustPressed(Input.Keys.UP) || (Gdx.input.isKeyPressed(Input.Keys.UP) && TimeUtils.nanoTime()-lastPressTime>150000000l)) {
 			lastPressTime=TimeUtils.nanoTime();
+			moveClickSound.play(0.5f);
 			currentPiece.Rotate();
 		}
 		if(Gdx.input.isKeyJustPressed(Input.Keys.DOWN) || (Gdx.input.isKeyPressed(Input.Keys.DOWN) && TimeUtils.nanoTime()-lastPressTime>100000000l)) {
 			lastPressTime=TimeUtils.nanoTime();
+			moveClickSound.play(0.5f);
 			if(!CheckCollisions()) currentPiece.moveDown();
 		}
 		if(Gdx.input.isKeyJustPressed(Input.Keys.RIGHT) || (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && TimeUtils.nanoTime()-lastPressTime>120000000l)) {
 			lastPressTime=TimeUtils.nanoTime();
+			moveClickSound.play(0.5f);
 			if(!CheckSideCollision(false)) currentPiece.moveRight();
 		}
 		if(Gdx.input.isKeyJustPressed(Input.Keys.LEFT) || (Gdx.input.isKeyPressed(Input.Keys.LEFT) && TimeUtils.nanoTime()-lastPressTime>120000000l)) {
 			lastPressTime=TimeUtils.nanoTime();
+			moveClickSound.play(0.5f);
 			if(!CheckSideCollision(true)) currentPiece.moveLeft();
 		}
 		if(Gdx.input.isKeyPressed(Input.Keys.A)) {
@@ -303,6 +320,7 @@ public class TetrisMain extends ApplicationAdapter {
 		if(TimeUtils.nanoTime() - lastDropTime > 200000000l) {
 			lastDropTime = TimeUtils.nanoTime();
 			if (CheckCollisions()) {
+				TurnToStone();
 				switch (random.nextInt(6)) {
 					case 0:
 						currentPiece = new Ef();
