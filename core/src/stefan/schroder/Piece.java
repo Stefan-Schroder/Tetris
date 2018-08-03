@@ -9,7 +9,7 @@ public abstract class Piece {
     private int[] position;
 
     public Piece(){
-        setPosition(new int[]{5,20});
+        setPosition(new int[]{5,21});
     }
 
     public void setCenter(int[] center){

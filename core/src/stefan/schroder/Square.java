@@ -11,11 +11,15 @@ public class Square extends Piece {
         setColour(Color.YELLOW);
 
         boolean t = true;
-        boolean[][] shape = {	{t,t},
-                                {t,t}};//this view in inverted
+        boolean f = false;
+        boolean[][] shape = {	{f,f,f},
+                                {f,t,t},
+                                {f,t,t}};//this view in inverted
         setShape(shape);
         center = new int[]{1, 1};
         setCenter(center);
     }
+
+    public void Rotate(){}
 
 }
