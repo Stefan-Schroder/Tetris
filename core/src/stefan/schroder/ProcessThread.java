@@ -32,6 +32,8 @@ public class ProcessThread extends Thread{
     private long nanoTime;
     private boolean nextBlock;
 
+    private long dropSpeed;
+
     public ProcessThread(){
         running = true;
 
@@ -56,6 +58,8 @@ public class ProcessThread extends Thread{
 
         score = 0;
         nextBlock = true;
+
+        dropSpeed = 200000000l;
     }
 
     private boolean CheckSideCollision(boolean checkLeft){
@@ -140,6 +144,10 @@ public class ProcessThread extends Thread{
     }
 
     private void TurnToStone() {
+        if(endGame()){
+            running = false;
+            return;
+        }
         blockDropSound.play();
         int[] pos = currentPiece.getPosition();
         int[] centerpos = currentPiece.getCenter();
@@ -172,12 +180,15 @@ public class ProcessThread extends Thread{
             }
         }
 
+        if(dropSpeed>=0){
+            dropSpeed *= 0.995;
+        }
     }
 
     private void randomBlock(){
         currentPiece = nextPiece;
 
-        switch (random.nextInt(6)) {
+        switch (random.nextInt(7)) {
             case 0:
                 nextPiece = new Ef();
                 break;
@@ -206,34 +217,41 @@ public class ProcessThread extends Thread{
 
     }
 
+    private boolean endGame(){
+        if(currentPiece.getPosition()[1]+currentPiece.getCenter()[1]>=20){
+            return true;
+        }
+        return false;
+    }
+
     public void run(){
         while(running) {
             if(currentPiece!=null) {
 
                 //input
-                if (Gdx.input.isKeyPressed(Input.Keys.UP) && nanoTime - lastPressTime > 150000000l) {
+                if (Gdx.input.isKeyPressed(Input.Keys.UP) && nanoTime - lastPressTime > 150000000l && !nextBlock) {
                     lastPressTime = nanoTime;
                     moveClickSound.play(0.5f);
                     currentPiece.Rotate();
                 }
-                else if (Gdx.input.isKeyPressed(Input.Keys.DOWN) && nanoTime - lastPressTime > 100000000l) {
+                if (Gdx.input.isKeyPressed(Input.Keys.DOWN) && nanoTime - lastPressTime > 100000000l && !nextBlock) {
                     lastPressTime = nanoTime;
                     moveClickSound.play(0.5f);
                     if (!CheckCollisions()) currentPiece.moveDown();
                 }
-                else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && nanoTime - lastPressTime > 150000000l) {
+                if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && nanoTime - lastPressTime > 150000000l && !nextBlock) {
                     lastPressTime = nanoTime;
                     moveClickSound.play(0.5f);
                     if (!CheckSideCollision(false)) currentPiece.moveRight();
                 }
-                else if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && nanoTime - lastPressTime > 150000000l) {
+                if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && nanoTime - lastPressTime > 150000000l && !nextBlock) {
                     lastPressTime = nanoTime;
                     moveClickSound.play(0.5f);
                     if (!CheckSideCollision(true)) currentPiece.moveLeft();
                 }
 
                 //yeet
-                else if (Gdx.input.isKeyPressed(Input.Keys.A)) {
+                if (Gdx.input.isKeyPressed(Input.Keys.A) && !nextBlock) {
                     if (CheckSideCollision(true)) {
                         blockWooshSound.play(0.8f);
                         TurnToStone();
@@ -243,7 +261,7 @@ public class ProcessThread extends Thread{
                         currentPiece.moveLeft();
                     }
                 }
-                else if (Gdx.input.isKeyPressed(Input.Keys.D)) {
+                if (Gdx.input.isKeyPressed(Input.Keys.D) && !nextBlock) {
                     if (CheckSideCollision(false)) {
                         blockWooshSound.play(0.8f);
                         TurnToStone();
@@ -254,7 +272,7 @@ public class ProcessThread extends Thread{
                         currentPiece.moveRight();
                     }
                 }
-                else if (currentPiece.getPosition()[1]<=19 && Gdx.input.isKeyPressed(Input.Keys.S)) {
+                if (!nextBlock && currentPiece.getPosition()[1]<=19 && Gdx.input.isKeyPressed(Input.Keys.S)) {
                     if (CheckCollisions()) {
                         blockWooshSound.play(0.8f);
                         TurnToStone();
@@ -267,7 +285,7 @@ public class ProcessThread extends Thread{
             }
 
             //drop
-            if (nanoTime - lastDropTime > 200000000l) {
+            if (nanoTime - lastDropTime > dropSpeed) {
                 lastDropTime = nanoTime;
                 if(nextBlock){
                     nextBlock = false;
@@ -326,16 +344,21 @@ public class ProcessThread extends Thread{
         return score;
     }
 
+    public boolean getRunning(){
+        return running;
+    }
+
     public void dispose(){
         blockBreakSound.dispose();
         blockDropSound.dispose();
         moveClickSound.dispose();
+        blockWooshSound.dispose();
+        music.dispose();
         running = false;
     }
 
     public void startThread(){
         if(thread==null){
-            System.out.print("Starting Thread");
             thread = new Thread(this, "Process Thread");
             thread.start();
         }

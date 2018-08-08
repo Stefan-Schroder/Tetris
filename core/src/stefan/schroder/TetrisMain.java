@@ -2,6 +2,7 @@ package stefan.schroder;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -119,7 +120,6 @@ public class TetrisMain extends ApplicationAdapter {
 		}
 		//mirror solids
 		batch.setColor(Color.PINK);
-		//batch.setColor(currentPiece.getColour());
 		for(int y=0; y<process.getMap().length; y++){
             if(process.getMap()[y][0]) batch.draw(blockImage, 10*10+10, y*10, 10f, 10f);
 			if(process.getMap()[y][9]) batch.draw(blockImage, 0, y*10, 10f, 10f);
@@ -134,8 +134,6 @@ public class TetrisMain extends ApplicationAdapter {
 		shapeRenderer.end();
 
         batch.begin();
-        font.draw(batch, "Score: "+String.valueOf(process.getScore()), 5f, 212f);
-		font.getData().setScale(.5f);
 		//next shape
 		boolean [][] nextShape = process.getNextPiece().getShape();
 		int[] nextShapeCenter = process.getNextPiece().getCenter();
@@ -152,6 +150,22 @@ public class TetrisMain extends ApplicationAdapter {
 					batch.draw(blockImage,100+xposition*scale,205+yposition*scale, scale, scale);
 				}
 			}
+		}
+
+		if(!process.getRunning()){
+			font.getData().setScale(1f);
+			font.draw(batch, "You Win't!", 25f, 150f);
+			font.getData().setScale(.5f);
+			font.draw(batch, "Score: "+String.valueOf(process.getScore())+"\nPress R to restart.", 25f, 130f);
+			if(Gdx.input.isKeyPressed(Input.Keys.R)){
+			    process.dispose();
+				process = new ProcessThread();
+				process.startThread();
+			}
+
+		}else{
+			font.getData().setScale(.5f);
+			font.draw(batch, "Score: "+String.valueOf(process.getScore()), 5f, 212f);
 		}
 		batch.end();
 
