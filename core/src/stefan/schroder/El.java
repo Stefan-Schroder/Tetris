@@ -3,7 +3,6 @@ package stefan.schroder;
 import com.badlogic.gdx.graphics.Color;
 
 public class El extends Piece{
-    private Color colour;
     private boolean[][] shape;
     private int[] center;
 

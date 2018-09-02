@@ -1,3 +1,6 @@
+Stefan Schroder
+SCHSTE054
+
 >Welcome to Tetris...kinda
 
 This was made for an assignment in 2nd year computer science at UCT, by Stefan Schroder.

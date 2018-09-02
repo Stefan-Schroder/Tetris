@@ -20,10 +20,10 @@ public class TetrisMain extends ApplicationAdapter {
     private Texture blockImage;
 
     private OrthographicCamera camera;
-    private SpriteBatch batch;
-
-    private Rectangle block;
-
+	private SpriteBatch batch;
+	
+	private Rectangle block;
+	
 	private ProcessThread process;
     //define blocks
 
