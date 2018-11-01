@@ -17,6 +17,8 @@ It is basically tetris but with some extra mechanics.
     There are "mirror bars" on either side of the block space, that aid the placement of blocks that wrap the screen
     _They are not an extra block space_
 
+    ![alt text](other/Screenshot.png?raw=true "Screenshot")
+
 2. Yeet buttons:
     if you dont know what yeet means, please go here: https://www.youtube.com/watch?v=2Bjy5YQ5xPc
 
@@ -41,7 +43,7 @@ It is basically tetris but with some extra mechanics.
         3.  "Yeet" can also be used as something you'd include in a sentence to describe what happened to someone who has been
             greatly or suddenly defeated in a competition such as sports or a video game.
         ...
-    "
+
     as said by Pasguine(October 28, 2017) on Urban Dictionary (https://www.urbandictionary.com/define.php?term=Yeet)
 
     ANYWAY, basically the asd (not w) will hurl your block in the 3 directions specified by wasd.
