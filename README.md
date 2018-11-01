@@ -15,7 +15,7 @@ It is basically tetris but with some extra mechanics.
 
 1. The walls wrap around and so do the blocks:
     There are "mirror bars" on either side of the block space, that aid the placement of blocks that wrap the screen
-    *They are not an extra block space*
+    _They are not an extra block space_
 
 2. Yeet buttons:
     if you dont know what yeet means, please go here: https://www.youtube.com/watch?v=2Bjy5YQ5xPc
