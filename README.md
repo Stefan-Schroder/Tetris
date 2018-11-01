@@ -57,13 +57,12 @@ It is basically tetris but with some extra mechanics.
 
 
 ### Controls ###
--left and right arrow keys control normal horizontal movement
--up arrow rotates the current block clockwise
--down arrow moves the current block down at twice the speed
--A yeets to the left
--D yeets to the right
--S yeets to the floor
-*there is no saving of scores
+* Left and Right arrow keys control normal horizontal movement
+* Up arrow rotates the current block clockwise
+* Down arrow moves the current block down at twice the speed
+* A yeets to the left
+* D yeets to the right
+* S yeets to the floor
 
 ## Credits ##
 * Sounds:
